@@ -1,0 +1,4 @@
+name: taskify_workspace
+packages:
+  - packages/*
+
