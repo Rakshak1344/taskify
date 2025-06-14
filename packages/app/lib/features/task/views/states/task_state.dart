@@ -16,6 +16,7 @@ class TaskState extends _$TaskState {
 
   // Fetch all tasks
   Future<void> fetchTasks() async {
+    state = const AsyncValue<List<Task>>.loading();
     await _exceptionAdapter
         .run(() async {
           await _taskService.fetchTasks();
@@ -26,7 +27,7 @@ class TaskState extends _$TaskState {
   }
 
   Future<void> createTask(String title, String description) async {
-    // state = const AsyncValue<List<Task>>.loading();
+    state = const AsyncValue<List<Task>>.loading();
     await _exceptionAdapter
         .run(() async {
           await _taskService.createTask(title, description);
@@ -42,6 +43,7 @@ class TaskState extends _$TaskState {
     String description,
     bool isCompleted,
   ) async {
+    state = const AsyncValue<List<Task>>.loading();
     await _exceptionAdapter
         .run(() async {
           await _taskService.updateTask(
