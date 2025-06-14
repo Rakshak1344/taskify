@@ -31,11 +31,23 @@ class _HomePageState extends ConsumerState<HomePage> {
             onPressed: () => context.goNamed(AppRouteName.dashboard.profile),
             icon: Icon(Icons.person_outline_rounded),
           ),
-          IconButton(
-            onPressed:
-                () => ref.read(taskStateProvider.notifier).deleteAllTasks(),
-            icon: Icon(Icons.delete_forever),
-          ),
+          ref
+              .watch(taskStateProvider)
+              .maybeWhen(
+                data:
+                    (tasks) => Visibility(
+                      visible: tasks.isNotEmpty,
+                      child: IconButton(
+                        onPressed:
+                            () =>
+                                ref
+                                    .read(taskStateProvider.notifier)
+                                    .deleteAllTasks(),
+                        icon: Icon(Icons.delete_forever),
+                      ),
+                    ),
+                orElse: () => SizedBox.shrink(),
+              ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -47,6 +59,10 @@ class _HomePageState extends ConsumerState<HomePage> {
           .watch(taskStateProvider)
           .when(
             data: (tasks) {
+              if (tasks.isEmpty) {
+                return Center(child: Text("No tasks available. Create one!"));
+              }
+
               return ListView.builder(
                 itemCount: tasks.length,
                 itemBuilder: (context, index) {
