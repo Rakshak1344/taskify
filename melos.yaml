@@ -2,3 +2,52 @@ name: taskify_workspace
 packages:
   - packages/*
 
+scripts:
+  # Format Dart Code
+  format:
+    name: "format"
+    exec: dart format lib --fix
+    description: |
+      Run `dart format` in all packages.
+
+  gen:
+    name: "gen"
+    description: "Run all generate scripts to build"
+    run: |
+      melos gen:build
+  ### Can add multiple dependant scripts here
+
+  # Build Runner Scripts
+  gen:build:
+    name: "gen:build"
+    description: 'Build generated files from build_runner'
+    run: flutter pub run build_runner build --delete-conflicting-outputs
+    exec:
+      orderDependents: true
+
+  gen:watch:
+    name: "gen:watch"
+    description: 'Build generated files from build_runner and watch them for changes'
+    run: flutter pub run build_runner watch --delete-conflicting-outputs
+    exec:
+      orderDependents: true
+    packageFilters:
+      dependsOn: build_runner
+
+  # Pull Firebase config using FlutterFire CLI
+  gen:firebase:
+    name: 'gen:firebase'
+    description: 'Generating firebase configuration files'
+    exec: |
+      flutterfire configure -p taskify-1b8d5 \
+      --platforms android,ios,web \
+      -a com.taskify.app \
+      -i com.taskify.app \
+      -m com.taskify.app \
+      -w 1:512343855133:web:470aefcb28f5891bce36f4 \
+      -y
+    packageFilters:
+      scope: app
+
+
+
