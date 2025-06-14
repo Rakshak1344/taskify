@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app/storage/hive/hive_helper.dart';
 import 'package:app/storage/hive/hive_preference.dart';
 import 'package:core/arch/app_config.dart';
 import 'package:app/firebase_options.dart';
@@ -8,14 +9,13 @@ import 'package:core/arch/storage/preference.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_ce_flutter/adapters.dart';
 
 class TaskifyAppConfig extends AppConfig {
   late HivePreference hivePreferencesInstance;
 
   @override
   Future<void> initDependencies() async {
-    await Hive.initFlutter();
+    await HiveHelper.init();
     hivePreferencesInstance = await HivePreference.getInstance();
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,

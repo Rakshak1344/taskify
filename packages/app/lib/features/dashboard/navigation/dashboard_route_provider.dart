@@ -1,5 +1,6 @@
 import 'package:app/features/dashboard/views/home_page.dart';
 import 'package:app/features/dashboard/views/profile_page.dart';
+import 'package:app/features/task/navigation/task_routes_provider.dart';
 import 'package:app/navigation/app_route_name.dart';
 import 'package:core/arch/app_config.dart';
 import 'package:core/arch/navigation/route_provider.dart';
@@ -22,6 +23,7 @@ class DashboardRoutesProvider extends RouteProvider {
             builder:
                 (BuildContext context, GoRouterState state) => ProfilePage(),
           ),
+          ...TaskRoutesProvider().routes(),
         ],
       ),
     ];

@@ -1,3 +1,4 @@
+import 'package:app/features/auth/views/state/user_state.dart';
 import 'package:core/arch/navigation/middlewares/navigation_middleware.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
@@ -27,10 +28,10 @@ class RouterNotifier extends _$RouterNotifier implements Listenable {
     /// We can probably simplify this further. We might also need to add
     /// a couple of checks to reduce the number of times we call the listener.
 
-    // ref.listen(
-    //   userStateProvider.selectAsync((data) => data),
-    //   (_, __) => updateRootNavigationMiddleware(),
-    // );
+    ref.listen(
+      userStateProvider.selectAsync((data) => data),
+      (_, __) => updateRootNavigationMiddleware(),
+    );
 
     await updateRootNavigationMiddleware();
 
