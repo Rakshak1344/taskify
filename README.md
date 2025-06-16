@@ -1,4 +1,9 @@
-# Taskify Project Setup Guide
+# Taskify Project 
+
+# Architecture:
+![App's Flow/ Architecture ](architecture.png)
+
+# Setup Guide
 
 This guide provides a comprehensive walkthrough for setting up the Taskify Flutter project, from installing prerequisites to running the application.
 
