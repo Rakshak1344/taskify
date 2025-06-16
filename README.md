@@ -1,4 +1,4 @@
-# Taskify Project 
+# Taskify App 
 
 # Architecture:
 The Taskify application follows a layered architecture designed for scalability, maintainability, and a clear separation of concerns. The data flows unidirectionally, ensuring a predictable state management and data synchronization process.
