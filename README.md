@@ -1,7 +1,7 @@
 # Taskify Project 
 
 # Architecture:
-![App's Flow/ Architecture ](architecture.png)
+![App's Flow/ Architecture](architecture.png)
 
 # Setup Guide
 
