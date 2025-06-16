@@ -171,8 +171,8 @@ scripts:
 Run these commands to link all local packages and generate necessary files.
 ```bash
 melos bs
-melos gen
 melos gen:firebase
+melos gen
 ```
 
 ---
