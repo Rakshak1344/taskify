@@ -22,7 +22,7 @@ The architecture is composed of the following layers:
 
 ### 4. Local Data Repository
 -   **Responsibility**: To store processed data in a persistent local database, making it available for offline use and providing a single source of truth for the application's state.
--   **Technology**: The implementation uses the `drift` (formerly Moor) database.
+-   **Technology**: The implementation uses the `hive` database.
 -   **Mechanism**: It stores the data provided by the Service layer. Any changes in this repository trigger the update flow that ultimately reaches the UI.
 
 ### 5. Network Repository (Remote Data Access)
