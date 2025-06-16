@@ -60,6 +60,7 @@ class TaskState extends _$TaskState {
 
   /// Delete a task by its ID
   Future<void> deleteTask(String taskId) async {
+    state = const AsyncValue<List<Task>>.loading();
     await _exceptionAdapter
         .run(() async {
           await _taskService.deleteTask(taskId);
@@ -71,6 +72,7 @@ class TaskState extends _$TaskState {
 
   /// Delete all tasks
   Future<void> deleteAllTasks() async {
+    state = const AsyncValue<List<Task>>.loading();
     await _exceptionAdapter
         .run(() async {
           await _taskService.deleteAllTasks();

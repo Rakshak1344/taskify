@@ -1,6 +1,7 @@
 import 'package:app/features/auth/views/state/user_state.dart';
 import 'package:app/navigation/app_route_name.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:core/utils/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -31,43 +32,40 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         children: [
           buildProfileListTile(),
           SizedBox(height: 12),
-          buildLogoutButton(),
+          ref
+              .watch(userStateProvider)
+              .maybeWhen(
+                loading: context.buildLoadingIndicator,
+                orElse: buildLogoutButton,
+              ),
         ],
       ),
     );
   }
 
   Widget buildProfileListTile() {
-    return ref
-        .watch(userStateProvider)
-        .when(
-          data: (user) {
-            if (user == null) {
-              return ListTile(
-                visualDensity: VisualDensity.comfortable,
-                leading: CircleAvatar(
-                  child: Icon(Icons.person_outline_rounded),
-                ),
-                title: Text("Invalid User"),
-              );
-            }
+    var user = ref.watch(userStateProvider).valueOrNull;
 
-            return ListTile(
-              visualDensity: VisualDensity.comfortable,
-              leading: CircleAvatar(
-                backgroundImage:
-                    user.photoUrl != null
-                        ? CachedNetworkImageProvider(user.photoUrl!)
-                        : null,
-                child: Text(user.displayName.substring(0, 1).toUpperCase()),
-              ),
-              title: Text(user.displayName),
-              subtitle: Text(user.email),
-            );
-          },
-          error: (error, stack) => Text("Error: $error"),
-          loading: () => const CircularProgressIndicator(),
-        );
+    if (user == null) {
+      return ListTile(
+        visualDensity: VisualDensity.comfortable,
+        leading: CircleAvatar(child: Icon(Icons.person_outline_rounded)),
+        title: Text("Invalid User"),
+      );
+    }
+
+    return ListTile(
+      visualDensity: VisualDensity.comfortable,
+      leading: CircleAvatar(
+        backgroundImage:
+            user.photoUrl != null
+                ? CachedNetworkImageProvider(user.photoUrl!)
+                : null,
+        child: Text(user.displayName.substring(0, 1).toUpperCase()),
+      ),
+      title: Text(user.displayName),
+      subtitle: Text(user.email),
+    );
   }
 
   Widget buildLogoutButton() {

@@ -2,6 +2,7 @@ import 'package:app/features/auth/views/state/user_state.dart';
 import 'package:app/navigation/app_route_name.dart';
 import 'package:app/storage/preference_keys.dart';
 import 'package:core/arch/storage/preference.dart';
+import 'package:core/utils/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -38,16 +39,16 @@ class _LoginSignupPageState extends ConsumerState<LoginSignupPage> {
               ),
             ),
             SizedBox(height: 20),
-
             ref
-                .read(userStateProvider)
+                .watch(userStateProvider)
                 .maybeWhen(
-                  loading: () => CircularProgressIndicator(),
-                  orElse:
-                      () => ElevatedButton(
-                        onPressed: _signInWithGoogle,
-                        child: Text("Google SignIn"),
-                      ),
+                  loading: context.buildLoadingIndicator,
+                  orElse: () {
+                    return ElevatedButton(
+                      onPressed: _signInWithGoogle,
+                      child: Text("Google SignIn"),
+                    );
+                  },
                 ),
           ],
         ),
