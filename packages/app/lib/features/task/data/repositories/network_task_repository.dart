@@ -1,12 +1,9 @@
-import 'package:app/features/auth/data/models/user.dart';
-import 'package:app/features/auth/views/state/user_state.dart';
 import 'package:app/features/task/data/models/task.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
-import 'package:core/utils/logger.dart';
 
 part 'network_task_repository.g.dart';
 

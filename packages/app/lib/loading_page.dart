@@ -1,4 +1,5 @@
 import 'package:core/ui/app_theme.dart';
+import 'package:core/utils/loading.dart';
 import 'package:flutter/material.dart';
 
 class LoadingPage extends StatelessWidget {
@@ -7,7 +8,7 @@ class LoadingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+      home: Scaffold(body: context.buildLoadingIndicator()),
       darkTheme: AppTheme.dark,
       theme: AppTheme.light,
       themeMode: ThemeMode.light,

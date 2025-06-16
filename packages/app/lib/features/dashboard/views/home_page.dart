@@ -1,6 +1,7 @@
 import 'package:app/features/task/data/models/task.dart';
 import 'package:app/features/task/views/states/task_state.dart';
 import 'package:app/navigation/app_route_name.dart';
+import 'package:core/utils/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -50,66 +51,106 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: buildAddTaskFloatingButton(context),
+      body: Column(
+        children: [
+          Expanded(
+            child: ref
+                .watch(taskStateProvider)
+                .when(
+                  skipLoadingOnReload: true,
+                  skipLoadingOnRefresh: true,
+                  data: (tasks) {
+                    if (tasks.isEmpty) {
+                      return buildWhenNoTasks(context);
+                    }
+
+                    return buildTasksListView(tasks);
+                  },
+                  error: (e, s) => Text("Something went wrong: $e"),
+                  loading: context.buildLoadingIndicator,
+                ),
+          ),
+          if (ref.watch(taskStateProvider).isLoading) ...[
+            SizedBox(height: 12),
+            context.buildLoadingIndicator(),
+            SizedBox(height: 12),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget buildTasksListView(List<Task> tasks) {
+    return ListView.builder(
+      itemCount: tasks.length,
+      itemBuilder: (context, index) {
+        final task = tasks[index];
+        return ListTile(
+          leading: Checkbox(
+            value: task.completedAt != null,
+            onChanged: (value) {},
+          ),
+          title: Text(
+            task.title,
+            style: TextStyle(
+              decoration:
+                  task.completedAt != null ? TextDecoration.lineThrough : null,
+            ),
+          ),
+          subtitle: Text(
+            task.description,
+            style: TextStyle(
+              decoration:
+                  task.completedAt != null ? TextDecoration.lineThrough : null,
+            ),
+          ),
+          trailing: buildEditAndDeleteButton(task),
+          onTap: () {
+            ref
+                .read(taskStateProvider.notifier)
+                .toggleTaskCompletion(
+                  task.id,
+                  task.completedAt == null ? true : false,
+                );
+
+            ///TODO: If need can create a detail page for task
+            // context.goNamed(
+            //   AppRouteName.task.detail,
+            //   pathParameters: {'taskId': task.id},
+            // );
+          },
+        );
+      },
+    );
+  }
+
+  Widget buildWhenNoTasks(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Center(child: Text("No tasks available. Create one!")),
+        SizedBox(height: 20),
+        ElevatedButton.icon(
+          onPressed: () => context.goNamed(AppRouteName.task.create),
+          label: Text("Create Task"),
+          icon: Icon(Icons.add),
+        ),
+      ],
+    );
+  }
+
+  Widget buildAddTaskFloatingButton(BuildContext context) {
+    return Visibility(
+      visible: ref
+          .watch(taskStateProvider)
+          .maybeWhen(data: (tasks) => tasks.isNotEmpty, orElse: () => true),
+      child: FloatingActionButton(
         onPressed: () => context.goNamed(AppRouteName.task.create),
         tooltip: "Add Task",
         child: Icon(Icons.add),
       ),
-      body: ref
-          .watch(taskStateProvider)
-          .when(
-            data: (tasks) {
-              if (tasks.isEmpty) {
-                return Center(child: Text("No tasks available. Create one!"));
-              }
-
-              return ListView.builder(
-                itemCount: tasks.length,
-                itemBuilder: (context, index) {
-                  final task = tasks[index];
-                  return ListTile(
-                    leading: Checkbox(
-                      value: task.completedAt != null,
-                      onChanged: (value) {
-                        ref
-                            .read(taskStateProvider.notifier)
-                            .toggleTaskCompletion(
-                              task.id,
-                              task.completedAt == null ? true : false,
-                            );
-                      },
-                    ),
-                    title: Text(
-                      task.title,
-                      style: TextStyle(
-                        decoration:
-                            task.completedAt != null
-                                ? TextDecoration.lineThrough
-                                : null,
-                      ),
-                    ),
-                    subtitle: Text(
-                      task.description,
-                      style: TextStyle(
-                        decoration:
-                            task.completedAt != null
-                                ? TextDecoration.lineThrough
-                                : null,
-                      ),
-                    ),
-                    trailing: buildEditAndDeleteButton(task),
-                    onTap:
-                        () => context.goNamed(
-                          AppRouteName.task.detail,
-                          pathParameters: {'taskId': task.id},
-                        ),
-                  );
-                },
-              );
-            },
-            error: (e, s) => Text("Something went wrong: $e"),
-            loading: () => CircularProgressIndicator(),
-          ),
     );
   }
 
