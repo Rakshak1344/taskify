@@ -18,6 +18,4 @@ extension LoadingIndicatorExtensions on BuildContext {
       builder: (context) => buildLoadingIndicator(),
     );
   }
-
-  void hideLoadingIndicator() => Navigator.of(this).pop();
 }

@@ -52,19 +52,32 @@ class _HomePageState extends ConsumerState<HomePage> {
         ],
       ),
       floatingActionButton: buildAddTaskFloatingButton(context),
-      body: ref
-          .watch(taskStateProvider)
-          .when(
-            data: (tasks) {
-              if (tasks.isEmpty) {
-                return buildWhenNoTasks(context);
-              }
+      body: Column(
+        children: [
+          Expanded(
+            child: ref
+                .watch(taskStateProvider)
+                .when(
+                  skipLoadingOnReload: true,
+                  skipLoadingOnRefresh: true,
+                  data: (tasks) {
+                    if (tasks.isEmpty) {
+                      return buildWhenNoTasks(context);
+                    }
 
-              return buildTasksListView(tasks);
-            },
-            error: (e, s) => Text("Something went wrong: $e"),
-            loading: context.buildLoadingIndicator,
+                    return buildTasksListView(tasks);
+                  },
+                  error: (e, s) => Text("Something went wrong: $e"),
+                  loading: context.buildLoadingIndicator,
+                ),
           ),
+          if (ref.watch(taskStateProvider).isLoading) ...[
+            SizedBox(height: 12),
+            context.buildLoadingIndicator(),
+            SizedBox(height: 12),
+          ],
+        ],
+      ),
     );
   }
 
