@@ -1,32 +1,86 @@
-# Taskify
+# Taskify Project Setup Guide
 
-A Task manager app
+This guide provides a comprehensive walkthrough for setting up the Taskify Flutter project, from installing prerequisites to running the application.
 
+---
 
-## Prerequisites
+## 1. Prerequisites
 
-- Install [FVM](https://fvm.app/documentation/getting-started/installation) (flutter version manager)
+Before you begin, ensure you have the necessary tools installed on your system.
 
+### **Install FVM (Flutter Version Manager)**
+FVM allows you to manage multiple Flutter SDK versions on your machine.
 ```bash
-  curl -fsSL https://fvm.app/install.sh | bash
+curl -fsSL [https://fvm.app/install.sh](https://fvm.app/install.sh) | bash
 ```
-- Install [Firebase-cli](https://formulae.brew.sh/formula/firebase-cli) for firebase setup, [click](https://firebase.google.com/docs/flutter/setup?platform=ios) to know more on installation
 
+### **Install Firebase CLI**
+The Firebase Command Line Interface is essential for interacting with your Firebase projects.
 ```bash
-  brew install firebase-cli
+brew install firebase-cli
 ```
-- Log into Firebase using your Google account by running the following command:
-```bash
-  firebase login
-```
-- In firebase project, create 3 apps - android, ios, and web. use `com.taskify.app` as package name.
 
-- Create a Flutter project with the package name as `com.taskify.app` and enable google-signin method under authentication menu, by running the below command you can select the right project among multiple projects.
-
+### **Activate Global Dart Packages**
+Activate `melos` for managing multi-package repositories and `spider` for asset generation.
 ```bash
-  flutterfire configure
+fvm flutter pub global activate melos
+fvm flutter pub global activate spider
 ```
-- Setup Java keystore - you will have to setup store password, key password, and few details - Replace  `~/taskify-key.jks` to your desired loaction if needed.
+---
+
+## 2. Firebase & Flutter Project Configuration
+
+Next, set up your Firebase project and link it to your local Flutter application.
+
+### **Log in to Firebase**
+Authenticate with your Google account to access your Firebase projects.
+```bash
+firebase login
+```
+
+### **Configure Firebase in Your Project**
+This command configures your Flutter project to connect with Firebase. It will prompt you to select the correct Firebase project.
+
+- When prompted, create three apps within your Firebase project: **Android**, **iOS**, and **web**.
+- Use `com.taskify.app` as the package name for all platforms.
+- In the Firebase console, navigate to **Authentication** > **Sign-in method** and enable the **Google** provider.
+
+Run the following command to begin:
+```bash
+flutterfire configure
+```
+
+### **Define Environment Variables**
+Create a `dev.define.json` file inside the `packages/app` directory. This file will store environment-specific configurations.
+
+To get your `GOOGLE_WEB_CLIENT_ID` and `GOOGLE_SERVER_CLIENT_ID`:
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Navigate to **APIs & Services** > **Credentials**.
+3. Find your OAuth 2.0 Client IDs.
+4. Configure the OAuth consent screen and add the following scopes:
+  - `/auth/userinfo.profile`
+  - `/auth/user.birthday.read`
+
+```json
+// packages/app/dev.define.json
+{
+  "APP_NAME": "Taskify",
+  "APP_SUFFIX": ".dev",
+  "BASE_URL": "http://<YOUR_IP>:<PORT>/api/v1",
+  "ENVIRONMENT": "dev",
+  "GOOGLE_WEB_CLIENT_ID": "<YOUR_GOOGLE_WEB_CLIENT_ID>",
+  "GOOGLE_SERVER_CLIENT_ID": "<YOUR_GOOGLE_SERVER_CLIENT_ID>"
+}
+```
+
+---
+
+## 3. Android Keystore & Signing Configuration
+
+Configure the Java Keystore required to sign your Android application for release builds.
+
+### **Generate Keystore**
+This command creates a new keystore file. You will be prompted to set a store password and a key password.
 ```bash
 keytool -genkey -v \
   -keystore ~/taskify-key.jks \
@@ -36,60 +90,58 @@ keytool -genkey -v \
   -alias taskify
 ```
 
-- Create a file called `key.properties` inside `packages/app/android` (refering to code  workspace) and add the details of jks and replace with the appropriate values provided.
-```bash
+### **Create Key Properties File**
+Create a file named `key.properties` inside the `packages/app/android` directory. Add the credentials for the keystore you just created.
+
+```properties
+# packages/app/android/key.properties
 storePassword=<YOUR_STORE_PASSWORD>
 keyPassword=<YOUR_KEY_PASSWORD>
 keyAlias=taskify
 storeFile=~/taskify-key.jks
 ```
 
-- Generate SHA-1 and SHA-256 by running the below command and use the values in respective values in the apps of a firebase project.
-
+### **Generate SHA Fingerprints**
+Generate the SHA-1 and SHA-256 fingerprints and add them to the Android app configuration in your Firebase project settings.
 ```bash
-./gradlew signingReport
-```
-- Configure melos script inside `melos.yaml`at the root of the project. Under Web app in firebase project copy `app id` and add it inside melos.yaml it should look something like below
-```bash
- flutterfire configure -p <PROJECT-NAME> \
-      --platforms android,ios,web \
-      -a com.taskify.app \
-      -i com.taskify.app \
-      -m com.taskify.app \
-      -w <WEB_APP_ID> \
-      -y
-```
-- Create `dev.define.json` at `packages/app` and replace the appropriate values.
-  Note: For google's web and server's client ID go to google cloud console and concent and scope that are `/auth/userinfo.profile`,`/auth/user.birthday.read`,
-
-```bash
-{
-  "APP_NAME": "Taskify",
-  "APP_SUFFIX": ".dev",
-  "BASE_URL": "http://<IP>:<PORT>/api/v1",
-  "ENVIRONMENT": "dev",
-  "GOOGLE_WEB_CLIENT_ID": <GOOGLE_WEB_CLIENT_ID>,
-  "GOOGLE_SERVER_CLIENT_ID":<GOOGLE_SERVER_CLIENT_ID>
-}
-
-
+cd packages/app/android && ./gradlew signingReport && cd ../../..
 ```
 
-## Project setup
+---
 
-- Pub Global activation
-```bash
-fvm flutter pub global activate melos
-fvm flutter pub global activate spider
+## 4. Melos & Final Setup
+
+Bootstrap the project dependencies and run the final generation scripts using Melos.
+
+### **Configure Melos Script**
+In your `melos.yaml` file at the project root, update the `flutterfire` script. Copy the **Web App ID** from your Firebase project settings and paste it in place of `<WEB_APP_ID>`.
+
+```yaml
+# melos.yaml
+scripts:
+  firebase:configure:
+    run: |
+      flutterfire configure -p <PROJECT-NAME> \
+        --platforms android,ios,web \
+        -a com.taskify.app \
+        -i com.taskify.app \
+        -m com.taskify.app \
+        -w <WEB_APP_ID> \
+        -y
 ```
-- Setup
+
+### **Bootstrap and Generate Files**
+Run these commands to link all local packages and generate necessary files.
 ```bash
 melos bs
 melos gen
 melos gen:firebase
 ```
 
-- Run the project using
+---
+
+## 5. Run the Project
+
+You are now ready to run the Taskify app. Use the `--dart-define-from-file` flag to load the environment configuration you created earlier.
 ```bash
-fvm flutter run --dart-define-from-file=dev.define.json
-```
+fvm flutter run --dart-define-from-file=packages/app/dev.define.json
