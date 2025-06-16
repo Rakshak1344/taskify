@@ -3,6 +3,7 @@ import 'package:app/features/task/views/states/task_state.dart';
 import 'package:app/features/task/views/task_mixin.dart';
 import 'package:collection/collection.dart';
 import 'package:core/utils/extensions/async_value_extension.dart';
+import 'package:core/utils/loading.dart';
 import 'package:core/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -85,7 +86,7 @@ class _EditTaskPageState extends ConsumerState<EditTaskPage>
               ref
                   .watch(taskStateProvider)
                   .maybeWhen(
-                    loading: () => Center(child: CircularProgressIndicator()),
+                    loading: context.buildLoadingIndicator,
                     orElse: () {
                       return ElevatedButton.icon(
                         onPressed: _saveTask,
