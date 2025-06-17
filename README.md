@@ -1,12 +1,16 @@
 # Taskify App 
-![Demo](demo.gif)
+![Demo](docs/demo.gif)
 
 > Here is the apk if you want to try it out on your Android device - Note: Please send your gmail email that you to try so I can add as test email else you'll be denied access.   [Download here](https://drive.google.com/file/d/1QSq-noFv6dwu7HuT3yG5uvEFSasgqnak/view?usp=sharing) 
+
+### Firestore Database Structure
+![Firestore Database Structure](docs/firestore-db.png)
+completedAt field is used to determine if the task is completed or not. If it is null, the task is not completed. If it has a value, the task is completed.
 
 # Architecture:
 The Taskify application follows a layered architecture designed for scalability, maintainability, and a clear separation of concerns. The data flows unidirectionally, ensuring a predictable state management and data synchronization process.
 
-![App's Flow/ Architecture](architecture.png)
+![App's Flow/ Architecture](docs/architecture.png)
 
 The architecture is composed of the following layers:
 
