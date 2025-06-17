@@ -1,4 +1,7 @@
 # Taskify App 
+![Demo](demo.gif)
+
+> Here is the apk if you want to try it out on your Android device - Note: Please send your gmail email that you to try so I can add as test email else you'll be denied access.   [Download here](https://drive.google.com/file/d/1QSq-noFv6dwu7HuT3yG5uvEFSasgqnak/view?usp=sharing) 
 
 # Architecture:
 The Taskify application follows a layered architecture designed for scalability, maintainability, and a clear separation of concerns. The data flows unidirectionally, ensuring a predictable state management and data synchronization process.
